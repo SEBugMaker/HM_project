@@ -5,8 +5,7 @@ import sqlparse
 import json
 
 
-
-def sql_to_json(sql):
+def sql_to_json(sql, filename):
     parsed = sqlparse.parse(sql)
     result = []
     for statement in parsed:
@@ -18,13 +17,16 @@ def sql_to_json(sql):
             if token_dict['type'] == 'None':
                 result.append(token_dict)
 
-    initialJsonData =  json.dumps(result)
+    initialJsonData = json.dumps(result)
     jsonData = json.loads(initialJsonData)
     ColumnName = extract_columns(jsonData[0]['value'])
 
     ColumnValue = parse_values_clause(jsonData[1]['value'])
 
     jsonObject = dict(zip(ColumnName, ColumnValue))
+
+    if ColumnName and ColumnValue:
+        jsonObject["Path"] = os.path.splitext(filename)[0]
 
     return jsonObject
 
@@ -87,6 +89,7 @@ def read_sql_file(file_path):
     statements = sqlparse.split(sql_content)
     return statements
 
+
 if __name__ == '__main__':
     res = []
     # 示例SQL文件
@@ -97,12 +100,9 @@ if __name__ == '__main__':
             file_path = os.path.join(directory, filename)
             statements = read_sql_file(file_path)
             for statement in statements:
-                res.append(sql_to_json(statement))
-    with open('output.json', 'w', encoding='utf-8') as f:
+                res.append(sql_to_json(statement, filename))
+    with open('NewOutput.json', 'w', encoding='utf-8') as f:
         json.dump(res, f, ensure_ascii=False, indent=4)
-
-
-
 
     # # 示例SQL语句
     # sql = '''

@@ -18,11 +18,14 @@ def metadata_func(record: dict, metadata: dict) -> dict:
     if "source" in metadata:
         del metadata["source"]
 
+    if "Path" in record:
+        metadata["Path"] = record["Path"]
+
     return metadata
 
 
 loader = JSONLoader(
-    file_path='output.json',
+    file_path='NewOutput.json',
     jq_schema='.[]',
     text_content=False,
     metadata_func=metadata_func
@@ -53,15 +56,15 @@ data = loader.load()
 formats_list = [
     frozenset(
         {'FunctionName', 'ModuleName', 'Version', 'SystemCapability', 'ModuleConstraint', 'Tables', 'ImportModule',
-         'ModuleVersion', 'FullName', 'MetaAPI', 'ModuleDescription', 'FunctionDescription'}),
+         'ModuleVersion', 'FullName', 'MetaAPI', 'ModuleDescription', 'FunctionDescription','Path'}),
     frozenset({'FunctionName', 'ReturnValue', 'RequiredPermissions', 'ErrorCodes', 'ReturnType', 'FullFunctionName',
-               'SystemCapability', 'FunctionDescription', 'Example', 'FunctionParameters'}),
+               'SystemCapability', 'FunctionDescription', 'Example', 'FunctionParameters','Path'}),
     frozenset({'Events', 'Description', 'ComponentName', 'Examples', 'Parameters', 'Attributes', 'Interfaces',
-               'SystemCapabilities', 'SubComponents'}),
-    frozenset({'EnumValue', 'Description', 'EnumName', 'EnumValueName', 'SystemCapability'}),
-    frozenset({'Module', 'Title', 'Content'}),
-    frozenset({'ErrorCode', 'HandlingSteps', 'ErrorDescription', 'ErrorInfo', 'PossibleCauses'}),
-    frozenset({'Description', 'TypeCategory', 'TypeName'})
+               'SystemCapabilities', 'SubComponents','Path'}),
+    frozenset({'EnumValue', 'Description', 'EnumName', 'EnumValueName', 'SystemCapability','Path'}),
+    frozenset({'Module', 'Title', 'Content','Path'}),
+    frozenset({'ErrorCode', 'HandlingSteps', 'ErrorDescription', 'ErrorInfo', 'PossibleCauses','Path'}),
+    frozenset({'Description', 'TypeCategory', 'TypeName','Path'})
 ]
 
 for doc in data:
@@ -311,7 +314,7 @@ for doc in data:
         # print(f"解析 JSON 时出错: {e}")
         data.remove(doc)
 
-# pprint(data[0])
+
 
 # 检测是否存在数据的metadata不含Import SystemCapability Constraint Description Usage
 for doc in data:
@@ -350,7 +353,7 @@ for split_docs in splitterData:
             metaData = doc_dict['metadata']
     doc = Document(page_content=pageContent, metadata=metaData)
     documents.append(doc)
-# pprint(documents[0])
+pprint(documents[0])
 
 
 # 检测是否存在数据的metadata不含Import SystemCapability Constraint Description Usage
