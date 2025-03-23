@@ -1,7 +1,11 @@
+import os
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_milvus import Milvus
 import numpy as np
-from sqlalchemy.testing.suite.test_reflection import metadata
+from dotenv import find_dotenv, load_dotenv
+load_dotenv(find_dotenv())
+DASHSCOPE_API_KEY=os.environ["DASHSCOPE_API_KEY"]
+MILVUS_TOKEN=os.environ["MILVUS_TOKEN"]
 
 # --- 策略一：仅基于 page_content 的向量相似度检索 ---
 class BasicVectorRetriever:
@@ -101,7 +105,7 @@ class CombinedEmbeddingRetriever:
 
 # 设置 DashScopeEmbeddings，确保提供有效的 API 密钥
 embeddings = DashScopeEmbeddings(
-    dashscope_api_key='sk-f0906d78e9284119a711c29e127f9788'  # 这里填入你的 API 密钥
+    dashscope_api_key=DASHSCOPE_API_KEY  # 这里填入你的 API 密钥
 )
 
 # 创建 Milvus 连接，提供正确的 URI 和 Token
@@ -110,7 +114,7 @@ vector_db = Milvus(
     collection_name='HarmonyReferences',
     connection_args={
         "uri": "https://in03-ea0930b1d68b504.serverless.gcp-us-west1.cloud.zilliz.com",  # 填入你的 Milvus 服务 URI
-        "token": "13d4fb4e41587949aa55472de51cd6161deda8b0e694eff69fc6cc9165bf897a8609ed8d572bc57a10b4c12f33288079d1e725f3",  # 填入你的 Milvus 服务 Token
+        "token": MILVUS_TOKEN,  # 填入你的 Milvus 服务 Token
         "secure": True  # 根据你的服务配置，确定是否需要使用 HTTPS
     }
 )
@@ -118,8 +122,8 @@ vector_db = Milvus(
 
 
 # 定义查询
-query = "Vector.tostring()"
-
+query = "View"
+print(DASHSCOPE_API_KEY)
 # print("=== BasicVectorRetriever 结果 ===")
 # basic_retriever = BasicVectorRetriever(vector_db, embeddings)
 # results_basic = basic_retriever.retrieve(query, k=10)

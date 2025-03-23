@@ -1,7 +1,7 @@
 import json
 import logging
 from pprint import pprint
-
+import os
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
@@ -9,6 +9,10 @@ from langchain_community.vectorstores import Milvus
 from langchain_community.document_loaders import JSONLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveJsonSplitter
+from dotenv import find_dotenv, load_dotenv
+load_dotenv(find_dotenv())
+DASHSCOPE_API_KEY=os.environ["DASHSCOPE_API_KEY"]
+MILVUS_TOKEN=os.environ["MILVUS_TOKEN"]
 
 
 # 定义元数据提取函数。
@@ -368,7 +372,7 @@ for doc in documents:
 
 embeddings = DashScopeEmbeddings(
 
-    dashscope_api_key='sk-f0906d78e9284119a711c29e127f9788'
+    dashscope_api_key=DASHSCOPE_API_KEY
 )
 
 # Configure logging
@@ -385,7 +389,7 @@ for i in range(0, len(data), batch_size):
             collection_name='HarmonyReferences',
             connection_args={
                 "uri": "https://in03-ea0930b1d68b504.serverless.gcp-us-west1.cloud.zilliz.com",
-                "token": "13d4fb4e41587949aa55472de51cd6161deda8b0e694eff69fc6cc9165bf897a8609ed8d572bc57a10b4c12f33288079d1e725f3",
+                "token": MILVUS_TOKEN,
                 "secure": True
             }
         )
