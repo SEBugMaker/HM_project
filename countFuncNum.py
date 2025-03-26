@@ -41,11 +41,11 @@ def get_filenames(directory):
 
 if __name__ == '__main__':
 
-    directory = './Harmony2JavaFunctionPairs2'
+    directory = './Harmony2JavaFunctionPairs3'
     filenames = get_filenames(directory)
     num = 0
     for file in filenames:
-        filePath = "./Harmony2JavaFunctionPairs2" + "/" + file
+        filePath = "./Harmony2JavaFunctionPairs3" + "/" + file
         print(filePath)
         loader = JSONLoader(
             file_path=filePath,
@@ -56,4 +56,6 @@ if __name__ == '__main__':
         data = loader.load()
         num+=len(data)
     print(num)
-# 4344 + 2378 + 400 + 1000 = 8122
+# 4344 + 2378 + 400 + 1000 + 7579 = 15710
+
+# 4344 + 2378 + 400 + 1000 + 10841 = 19963
