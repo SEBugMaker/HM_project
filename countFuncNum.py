@@ -56,6 +56,16 @@ if __name__ == '__main__':
         data = loader.load()
         num+=len(data)
     print(num)
-# 4344 + 2378 + 400 + 1000 + 7579 = 15710
 
-# 4344 + 2378 + 400 + 1000 + 10841 = 19963
+    # directory = 'HarmonyFunctions/code_classification/function'
+    # filenames = get_filenames(directory)
+    # storageFilenames = get_filenames("./Harmony2JavaFunctionPairs3")
+    # print(filenames)
+    # num = 0
+    # for filename in filenames:
+    #     if filename in storageFilenames:
+    #         num+=1
+    # print(num)
+
+
+# 4344 + 2378 + 400 + 1000 + 30158 = 38280
