@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # for filename in filenames:
     #     if filename in storageFilenames:
     #         num+=1
-    # print(num)
+    # print(len(filenames)-num)
 
 
-# 4344 + 2378 + 400 + 1000 + 30158 = 38280
+# 4344 + 2378 + 400 + 1000 + 32908 = 41030

@@ -18,9 +18,8 @@ vector_db = Milvus(
     embedding_function=embeddings,
     collection_name='functionPairs',
     connection_args={
-        "uri": "https://in03-ea0930b1d68b504.serverless.gcp-us-west1.cloud.zilliz.com",  # 填入你的 Milvus 服务 URI
-        "token": MILVUS_TOKEN,  # 填入你的 Milvus 服务 Token
-        "secure": True  # 根据你的服务配置，确定是否需要使用 HTTPS
+        "host":"127.0.0.1",
+        "port":"19530"
     }
 )
 
