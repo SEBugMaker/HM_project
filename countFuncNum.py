@@ -39,23 +39,44 @@ def get_filenames(directory):
             filenames.append(file)
     return filenames
 
+def count_JSON_data_num(filepath):
+    loader = JSONLoader(
+        file_path=filepath,
+        jq_schema='.[]',
+        text_content=False
+    )
+
+    data = loader.load()
+    return len(data)
+
 if __name__ == '__main__':
-
-    directory = './Harmony2JavaFunctionPairs3'
-    filenames = get_filenames(directory)
+    filenames = get_filenames("./Harmony2JavaFunctionPairs4")
     num = 0
-    for file in filenames:
-        filePath = "./Harmony2JavaFunctionPairs3" + "/" + file
-        print(filePath)
-        loader = JSONLoader(
-            file_path=filePath,
-            jq_schema='.[]',
-            text_content=False
-        )
+    for filename in filenames:
+        if filename.endswith(".json"):
+            file_path = os.path.join("./Harmony2JavaFunctionPairs4", filename)
+            print(file_path)
+            num += count_JSON_data_num(file_path)
 
-        data = loader.load()
-        num+=len(data)
     print(num)
+    # 训练用数据集数量
+    # 1053+1303+313 = 2669
+
+    # directory = './Harmony2JavaFunctionPairs3'
+    # filenames = get_filenames(directory)
+    # num = 0
+    # for file in filenames:
+    #     filePath = "./Harmony2JavaFunctionPairs3" + "/" + file
+    #     print(filePath)
+    #     loader = JSONLoader(
+    #         file_path=filePath,
+    #         jq_schema='.[]',
+    #         text_content=False
+    #     )
+    #
+    #     data = loader.load()
+    #     num+=len(data)
+    # print(num)
 
     # directory = 'HarmonyFunctions/code_classification/function'
     # filenames = get_filenames(directory)
@@ -69,3 +90,4 @@ if __name__ == '__main__':
 
 
 # 4344 + 2378 + 400 + 1000 + 32908 = 41030
+# Java -> ArkTS 3097

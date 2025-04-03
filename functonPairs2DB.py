@@ -54,9 +54,8 @@ for i in range(0, len(data), batch_size):
             embeddings,
             collection_name='functionPairs',
             connection_args={
-                "uri": "https://in03-ea0930b1d68b504.serverless.gcp-us-west1.cloud.zilliz.com",
-                "token": MILVUS_TOKEN,
-                "secure": True
+                "host":"127.0.0.1",
+                "port":"19530"
             }
         )
         logging.info(f"Successfully uploaded batch {i // batch_size + 1} of {len(data) // batch_size + 1}")
