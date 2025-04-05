@@ -59,8 +59,6 @@ if __name__ == '__main__':
             num += count_JSON_data_num(file_path)
 
     print(num)
-    # 训练用数据集数量
-    # 1053+1303+313 = 2669
 
     # directory = './Harmony2JavaFunctionPairs3'
     # filenames = get_filenames(directory)
@@ -88,6 +86,9 @@ if __name__ == '__main__':
     #         num+=1
     # print(len(filenames)-num)
 
-
+# 数据量
 # 4344 + 2378 + 400 + 1000 + 32908 = 41030
-# Java -> ArkTS 3097
+# Java -> ArkTS 9737
+
+# 训练用数据集数量
+# 1053+1303+313 = 2669

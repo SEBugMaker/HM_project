@@ -25,7 +25,7 @@ vector_db = Milvus(
 
 
 def get_similar_code(query):
-    res = vector_db.similarity_search(query, k=5)
+    res = vector_db.similarity_search(query, k=3)
     data = []
     for doc in res:
         tmp = {
