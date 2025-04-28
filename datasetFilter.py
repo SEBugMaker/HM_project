@@ -42,16 +42,43 @@ EXAMPLE JSON OUTPUT:
 }
 """
 
-folder_path = "./Harmony2JavaFunctionPairs2"
-json_output_path = "./FinetuningDataset/dataset2.json"
+system_prompt2 = """
+假如你是一名资深的鸿蒙应用开发人员，你需要阅读给出的安卓Java代码和鸿蒙的ArkTS函数。
+1. 阅读并理解安卓Java函数，判断Java函数是否包含R类等难以翻译的内容，如果包含请直接返回"wrong format"
+2. 然后阅读鸿蒙的ArkTS函数，判断是否有常见的格式或者语法错误，如：
+2-1. ArkTS不支持var，请使用let声明变量。
+2-2. ArkTS是一种静态类型语言，所有数据的类型都必须在编译时确定。但是，如果一个变量或常量的声明包含了初始值，那么开发者就不需要显式指定其类型。如let hi1: string = 'hello';let hi2 = 'hello, world';都是正确的
+2-3. ArkTS提供number类型，任何整数和浮点数都可以被赋给此类型的变量。数字字面量包括整数字面量和十进制浮点数字面量
+2-4. ArkTS不支持intersection type，可以使用继承作为替代方案
 
-res = []
+最终按照EXAMPLE JSON OUTPUT的格式返回。
+
+EXAMPLE JSON OUTPUT:
+{
+    "instruction": "你是一名资深的鸿蒙开发工程师，你需要将给出的安卓Java函数翻译为鸿蒙ArkTS函数",
+    "input": 修改后的安卓Java函数（字符串类型）,
+    "output": 修改后的鸿蒙ArkTS函数（字符串类型）
+}
+"""
+
+folder_path = "./Harmony2JavaFunctionPairs3"
+json_output_path = "./FinetuningDataset/Pair3/"
+
+
+translated = []
+for root, dirs, files in os.walk(json_output_path):
+    for file in files:
+        translated.append(file)
 
 
 for filename in os.listdir(folder_path):
+    if filename in translated:
+        print(filename + " has been solved, skip")
+        continue
+    res = []
     file_path = os.path.join(folder_path, filename)
 
-    print(file_path)
+    print("resolve file: "+file_path)
 
     loader = JSONLoader(
         file_path=file_path,
@@ -90,6 +117,6 @@ for filename in os.listdir(folder_path):
                 res.append(json.loads(response.choices[0].message.content))
         except Exception as e:
             print(f"Error occurred while translating: {e}")
-
-with open(json_output_path, "w", encoding="utf-8") as json_file:
-    json.dump(res, json_file, ensure_ascii=False, indent=4)
+    with open(json_output_path+filename, "w", encoding="utf-8") as json_file:
+        json.dump(res, json_file, ensure_ascii=False, indent=4)
+    print("Finished file: "+filename)

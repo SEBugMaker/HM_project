@@ -22,9 +22,11 @@ client = OpenAI(
 
 system_prompt = """
 假如你是一名资深的鸿蒙应用开发人员，你现在需要将给出的安卓的Java翻译成鸿蒙的ArkTS函数。请注意以下几点：
-1. 用户会给出3组ArkTS-Java的函数对作为翻译的参考，你需要学习其中的语法等知识，请不要直接复制粘贴
-2. 不一定是一句一句翻译，也可以按照实现功能一致，变量名和返回类型一致的要求翻译，**请注意一定是函数对应函数**
-3. 如果安卓函数涉及到R类等这种无法有效翻译到鸿蒙函数的内容，请直接返回"wrong format"
+1. 请判断给出的安卓函数是否是Java函数，如果是Kotlin函数请直接返回"kotlin function"
+2. 用户会给出3组ArkTS-Java的函数对作为翻译的参考，你需要学习其中的语法等知识，请不要直接复制粘贴
+3. 不一定是一句一句翻译，也可以按照实现功能一致，变量名和返回类型一致的要求翻译，**请注意一定是函数对应函数**
+4. 如果安卓函数涉及到R类等这种无法有效翻译到鸿蒙函数的内容，请直接返回"wrong format"
+5. 翻译可以参考https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/typescript-to-arkts-migration-guide-V5
 
 最终按照EXAMPLE JSON OUTPUT的格式返回。
 
@@ -46,6 +48,7 @@ for root, dirs, files in os.walk(json_output_dir):
 
 for filename in os.listdir(folder_path):
     res = []
+    flag = True
     if filename in filenames:
         print(filename + " has been translated, skip")
         continue
@@ -61,6 +64,8 @@ for filename in os.listdir(folder_path):
 
     data = loader.load()
     for doc in data:
+        if flag == False:
+            break
         text_data1 = json.loads(doc.page_content)
         for text in text_data1:
             JavaCode = text
@@ -86,6 +91,11 @@ for filename in os.listdir(folder_path):
                         'type': 'json_object'
                     }
                 )
+                if "kotlin function" in response.choices[0].message.content:
+                    #如果检测到是kotlin函数，结束这个文档的翻译
+                    print("Detected Kotlin function, skipping this document.")
+                    flag = False
+                    break
                 if "wrong format" not in response.choices[0].message.content:
                     # 将结果存储到res中
                     pprint(json.loads(response.choices[0].message.content))

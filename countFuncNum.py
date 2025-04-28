@@ -49,46 +49,25 @@ def count_JSON_data_num(filepath):
     data = loader.load()
     return len(data)
 
-if __name__ == '__main__':
-    filenames = get_filenames("./Harmony2JavaFunctionPairs4")
+def count_num_in_folder(folder):
     num = 0
-    for filename in filenames:
-        if filename.endswith(".json"):
-            file_path = os.path.join("./Harmony2JavaFunctionPairs4", filename)
-            print(file_path)
-            num += count_JSON_data_num(file_path)
+    for root, dirs, files in os.walk(folder):
+        for file in files:
+            file_path = os.path.join(root, file)
+            if file.endswith(".json"):
+                num += count_JSON_data_num(file_path)
+    return num
 
-    print(num)
+if __name__ == '__main__':
 
-    # directory = './Harmony2JavaFunctionPairs3'
-    # filenames = get_filenames(directory)
-    # num = 0
-    # for file in filenames:
-    #     filePath = "./Harmony2JavaFunctionPairs3" + "/" + file
-    #     print(filePath)
-    #     loader = JSONLoader(
-    #         file_path=filePath,
-    #         jq_schema='.[]',
-    #         text_content=False
-    #     )
-    #
-    #     data = loader.load()
-    #     num+=len(data)
-    # print(num)
+    print(count_num_in_folder("./finetuningDataset/Pair3"))
 
-    # directory = 'HarmonyFunctions/code_classification/function'
-    # filenames = get_filenames(directory)
-    # storageFilenames = get_filenames("./Harmony2JavaFunctionPairs3")
-    # print(filenames)
-    # num = 0
-    # for filename in filenames:
-    #     if filename in storageFilenames:
-    #         num+=1
-    # print(len(filenames)-num)
+    # 27742 + 27793 + 3358 =
 
 # 数据量
 # 4344 + 2378 + 400 + 1000 + 32908 = 41030
-# Java -> ArkTS 9737
+# Java -> ArkTS 38012
 
 # 训练用数据集数量
 # 1053+1303+313 = 2669
+# ArkTS-Java 15780
