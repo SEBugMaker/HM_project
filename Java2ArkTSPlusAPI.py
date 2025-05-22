@@ -134,6 +134,8 @@ for root, dirs, files in os.walk(json_output_dir):
 for filename in os.listdir(folder_path):
     res = []
     flag = True
+    if filename == '.DS_Store':
+        continue
     if filename in filenames:
         print(filename + " has been translated, skip")
         continue
