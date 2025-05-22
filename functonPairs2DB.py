@@ -1,3 +1,7 @@
+###
+# 将代码对转为向量数据库
+# Java代码作为pagecontent
+###
 import json
 import logging
 import os

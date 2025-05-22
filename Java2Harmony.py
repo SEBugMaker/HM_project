@@ -1,3 +1,6 @@
+###
+# Java -> ArkTS 第一轮翻译，结合相似代码
+###
 import json
 import os
 from pprint import pprint

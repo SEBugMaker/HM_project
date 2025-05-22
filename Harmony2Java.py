@@ -1,3 +1,9 @@
+###
+# 鸿蒙函数翻译至安卓Java函数
+# 此版本为最初尝试时搭建的使用tongyi的版本
+# 仅加入原始代码与描述
+# 已停用
+###
 import json
 import os
 from pprint import pprint

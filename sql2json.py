@@ -1,3 +1,6 @@
+###
+# 将sql形式的知识库整理为json格式
+###
 import os
 import re
 from pprint import pprint

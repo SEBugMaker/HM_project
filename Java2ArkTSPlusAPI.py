@@ -1,3 +1,7 @@
+###
+# Java -> ArkTS 第二轮翻译
+# 通过Java的import检索API映射表，然后进一步翻译
+###
 import csv
 import json
 import os
@@ -17,6 +21,9 @@ client = OpenAI(
     api_key=DEEPSEEK_API_KEY,
     base_url="https://api.deepseek.com",
 )
+
+java_to_harmony_api_map = {}
+
 
 def search_in_csv(file_path, column_name, search_value):
     results = []
@@ -85,9 +92,13 @@ def get_API(javaCode):
             matches = search_in_csv2(file_path, column_name, toSearch)
             sorted_matches = sorted(matches, key=lambda x: x["similarity"], reverse=True)[:5]
             res = res + "Java代码中import " + key + " 在翻译中可能用到的鸿蒙API有:\n"
+            harmony_apis = []
             for match in sorted_matches:
                 # print(match)
                 res += "鸿蒙API: " + match["import_from"] + " 涉及到的方法描述为: " + match["target_text"] + "\n"
+                harmony_apis.append(match["import_from"])
+            # 更新全局映射字典
+            java_to_harmony_api_map[key] = harmony_apis
         else:
             for method in value:
                 import_class = (key.split(".")[-1]).split(";")[0]
@@ -96,9 +107,13 @@ def get_API(javaCode):
                 matches = search_in_csv(file_path, column_name, toSearch)
                 sorted_matches = sorted(matches, key=lambda x: x["similarity"], reverse=True)[:5]
                 res = res + "Java代码中import " + key + " 涉及到的方法 "+ method +" 在翻译中可能用到的鸿蒙API有:\n"
+                harmony_apis = []
                 for match in sorted_matches:
                     # print(match)
                     res += "鸿蒙API: " + match["import_from"] + " 涉及到的方法描述为: " + match["target_text"] + "\n"
+                    harmony_apis.append(match["import_from"])
+                # 更新全局映射字典
+                java_to_harmony_api_map[f"{key}.{method}"] = harmony_apis
 
     return res
 
@@ -187,10 +202,15 @@ for filename in os.listdir(folder_path):
                 break
             if "wrong format"  not in response.choices[0].message.content:
                 # 将结果存储到res中
-                pprint(json.loads(response.choices[0].message.content))
-                res.append(json.loads(response.choices[0].message.content))
+                result = json.loads(response.choices[0].message.content)
+                # 添加 api_map 字段
+                result["api_map"] = java_to_harmony_api_map.copy()
+                pprint(result)
+                res.append(result)
         except Exception as e:
             print(f"Error occurred while translating: {e}")
+        finally:
+            java_to_harmony_api_map.clear()
     with open(json_output_dir+filename, "w", encoding="utf-8") as json_file:
         json.dump(res, json_file, ensure_ascii=False, indent=4)
     print("Finished file: "+filename)

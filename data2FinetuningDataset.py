@@ -1,3 +1,6 @@
+###
+# 将已有数据调整为微调数据集格式
+###
 import json
 import os
 
@@ -66,13 +69,13 @@ for entry in data:
 
 
 # 生成 JSON 文件
-json_output_path = "./dataset0.json"
+json_output_path = "./dataset_parallel.json"
 with open(json_output_path, "w", encoding="utf-8") as json_file:
     json.dump(entries, json_file, ensure_ascii=False, indent=4)
 
 
 loader = JSONLoader(
-    file_path='./dataset0.json',
+    file_path='./dataset_parallel.json',
     jq_schema='.[]',
     text_content=False
 )

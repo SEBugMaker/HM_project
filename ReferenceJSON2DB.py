@@ -1,3 +1,6 @@
+###
+# 将json格式的知识库转为向量数据库
+###
 import json
 import logging
 from pprint import pprint
@@ -378,8 +381,8 @@ embeddings = DashScopeEmbeddings(
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# 分批上传数据，每批20个
-batch_size = 50
+# 分批上传数据，每批50个
+batch_size = 1
 for i in range(0, len(data), batch_size):
     batch = documents[i:i + batch_size]
     try:
@@ -388,12 +391,11 @@ for i in range(0, len(data), batch_size):
             embeddings,
             collection_name='HarmonyReferences',
             connection_args={
-                "uri": "https://in03-ea0930b1d68b504.serverless.gcp-us-west1.cloud.zilliz.com",
-                "token": MILVUS_TOKEN,
-                "secure": True
+                "host": "127.0.0.1",
+                "port": "19530"
             }
         )
         logging.info(f"Successfully uploaded batch {i // batch_size + 1} of {len(data) // batch_size + 1}")
     except Exception as e:
-
         logging.error(f"Error uploading batch {i // batch_size + 1}: {e}")
+

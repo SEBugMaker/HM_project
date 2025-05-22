@@ -1,4 +1,7 @@
-# TODO: 记得打开本地向量数据库
+###
+# 未使用
+# 原本用于进一步过滤翻译结果
+###
 import json
 import os
 from pprint import pprint
@@ -31,25 +34,6 @@ system_prompt = """
 2. 用户会给出3组ArkTS-Java的函数对作为翻译的参考，你需要学习其中的翻译技巧和语法，请不要直接复制粘贴
 3. 理解鸿蒙函数并检查是否有返回类型，如果没有的话请为鸿蒙函数添加返回类型，例如将public add(){return 1;}修改为public add(): number{return 1;}，但是具体返回值需要你自行理解并添加。
 4. 判断给出的Java函数是否和鸿蒙函数对应，**包括但不限于检查函数功能是否一致、变量名和返回类型是否一致、是否是函数对应函数等。如果不对应，请修改安卓Java函数，注意使用并保留安卓原生API并保证是函数对应函数，参数对应一致，实现功能对应一致**。如果对应则不需要修改。
-
-最终按照EXAMPLE JSON OUTPUT的格式返回。
-
-EXAMPLE JSON OUTPUT:
-{
-    "instruction": "你是一名资深的鸿蒙开发工程师，你需要将给出的安卓Java函数翻译为鸿蒙ArkTS函数",
-    "input": 修改后的安卓Java函数（字符串类型）,
-    "output": 修改后的鸿蒙ArkTS函数（字符串类型）
-}
-"""
-
-system_prompt2 = """
-假如你是一名资深的鸿蒙应用开发人员，你需要阅读给出的安卓Java代码和鸿蒙的ArkTS函数。
-1. 阅读并理解安卓Java函数，判断Java函数是否包含R类等难以翻译的内容，如果包含请直接返回"wrong format"
-2. 然后阅读鸿蒙的ArkTS函数，判断是否有常见的格式或者语法错误，如：
-2-1. ArkTS不支持var，请使用let声明变量。
-2-2. ArkTS是一种静态类型语言，所有数据的类型都必须在编译时确定。但是，如果一个变量或常量的声明包含了初始值，那么开发者就不需要显式指定其类型。如let hi1: string = 'hello';let hi2 = 'hello, world';都是正确的
-2-3. ArkTS提供number类型，任何整数和浮点数都可以被赋给此类型的变量。数字字面量包括整数字面量和十进制浮点数字面量
-2-4. ArkTS不支持intersection type，可以使用继承作为替代方案
 
 最终按照EXAMPLE JSON OUTPUT的格式返回。
 

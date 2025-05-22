@@ -1,3 +1,6 @@
+###
+# 统计数据量
+###
 import os
 import re
 
@@ -14,6 +17,7 @@ def count_code_blocks(filename):
     code_blocks = re.findall(code_block_pattern, content)
 
     return len(code_blocks)
+
 
 def add_code_block_count_to_file(filename):
     # 读取原始文件内容
@@ -32,12 +36,14 @@ def add_code_block_count_to_file(filename):
 
     print(f"已将代码块数量 {code_block_count} 添加到文件开头")
 
+
 def get_filenames(directory):
     filenames = []
     for root, dirs, files in os.walk(directory):
         for file in files:
             filenames.append(file)
     return filenames
+
 
 def count_JSON_data_num(filepath):
     loader = JSONLoader(
@@ -49,6 +55,7 @@ def count_JSON_data_num(filepath):
     data = loader.load()
     return len(data)
 
+
 def count_num_in_folder(folder):
     num = 0
     for root, dirs, files in os.walk(folder):
@@ -58,16 +65,6 @@ def count_num_in_folder(folder):
                 num += count_JSON_data_num(file_path)
     return num
 
+
 if __name__ == '__main__':
-
-    print(count_num_in_folder("./finetuningDataset/Pair3"))
-
-    # 27742 + 27793 + 3358 =
-
-# 数据量
-# 4344 + 2378 + 400 + 1000 + 32908 = 41030
-# Java -> ArkTS 38012
-
-# 训练用数据集数量
-# 1053+1303+313 = 2669
-# ArkTS-Java 15780
+    print(count_num_in_folder("FinetuningDataset/Pair4"))
