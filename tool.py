@@ -96,5 +96,5 @@ def search_in_csv(file_path, column_name, search_value):
 
 
 if __name__ == "__main__":
-    pprint(search_in_csv("./results.csv","source_id","isLetter"))
-
+    # findFunctionInFolder("Harmony2JavaFunctionPairs4","SchemeRainbow")
+    process_json_files("FinetuningDataset/Pair4","FinetuningDataset/dataset_java2arkts_new.json")

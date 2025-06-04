@@ -104,7 +104,7 @@ if __name__ == '__main__':
             statements = read_sql_file(file_path)
             for statement in statements:
                 res.append(sql_to_json(statement, filename))
-    with open('NewOutput.json', 'w', encoding='utf-8') as f:
+    with open('referenceData.json', 'w', encoding='utf-8') as f:
         json.dump(res, f, ensure_ascii=False, indent=4)
 
     # # 示例SQL语句

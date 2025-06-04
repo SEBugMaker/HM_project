@@ -3,6 +3,7 @@
 ###
 import json
 import logging
+import re
 from pprint import pprint
 import os
 from langchain_community.embeddings import OpenAIEmbeddings
@@ -32,7 +33,7 @@ def metadata_func(record: dict, metadata: dict) -> dict:
 
 
 loader = JSONLoader(
-    file_path='NewOutput.json',
+    file_path='referenceData.json',
     jq_schema='.[]',
     text_content=False,
     metadata_func=metadata_func
@@ -119,6 +120,10 @@ for doc in data:
                 #         "Tables": ""
                 #     },
                 if text_data['FunctionName'] != "":
+                    ImportModule = text_data['ImportModule']
+                    if ImportModule != "":
+                        moduleName = re.findall(r'\{\s*([^}]*?)\s*\}', ImportModule)
+                        print(f"Importing module {moduleName}")
                     doc.page_content = (
                             'Function ' + text_data['FunctionName'] +
                             ' from module ' + text_data['ModuleName'] +
@@ -381,21 +386,21 @@ embeddings = DashScopeEmbeddings(
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# 分批上传数据，每批50个
-batch_size = 1
-for i in range(0, len(data), batch_size):
-    batch = documents[i:i + batch_size]
-    try:
-        vector_db = Milvus.from_documents(
-            batch,
-            embeddings,
-            collection_name='HarmonyReferences',
-            connection_args={
-                "host": "127.0.0.1",
-                "port": "19530"
-            }
-        )
-        logging.info(f"Successfully uploaded batch {i // batch_size + 1} of {len(data) // batch_size + 1}")
-    except Exception as e:
-        logging.error(f"Error uploading batch {i // batch_size + 1}: {e}")
-
+# # 分批上传数据，每批50个
+# batch_size = 1
+# for i in range(0, len(data), batch_size):
+#     batch = documents[i:i + batch_size]
+#     try:
+#         vector_db = Milvus.from_documents(
+#             batch,
+#             embeddings,
+#             collection_name='HarmonyReferences',
+#             connection_args={
+#                 "host": "127.0.0.1",
+#                 "port": "19530"
+#             }
+#         )
+#         logging.info(f"Successfully uploaded batch {i // batch_size + 1} of {len(data) // batch_size + 1}")
+#     except Exception as e:
+#         logging.error(f"Error uploading batch {i // batch_size + 1}: {e}")
+#

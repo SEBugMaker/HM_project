@@ -21,7 +21,7 @@ class BasicVectorRetriever:
         self.vectorstore = vectorstore
         self.embedding_model = embedding_model
 
-    def retrieve(self, query: str, k: int = 10):
+    def retrieve(self, query: str, k: int = 3):
         return self.vectorstore.similarity_search(query, k=k)
 
 
@@ -204,17 +204,14 @@ query = "Module name :@ohos.hilog (HiLog日志打印). The full name : warn"
 #     print("Metadata:", doc.metadata)
 #     print("-----")
 
-
-
-print("\n=== CombinedEmbeddingRetriever 结果 ===")
-# 创建自定义检索器实例
-retriever = CombinedEmbeddingRetriever(embedding_model=embeddings,vectorstore=vector_db)
-results_combined = retriever.retrieve(query,k=5)
-res = []
-for i, doc in enumerate(results_combined):
-    doc.metadata['Path'] = "https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/" + doc.metadata[
-        'Path']
-    print(f"Top {i + 1}: {doc.page_content}")
-    print("Metadata:", doc.metadata)
-    # doc.metadata['Path'] = "https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/"+doc.metadata['Path']
-    print("-----")
+def searchSimilarReference(text):
+    # 创建自定义检索器实例
+    retriever = BasicVectorRetriever(embedding_model=embeddings, vectorstore=vector_db)
+    results_combined = retriever.retrieve(query, k=3)
+    res = "可能会使用到的相关API知识: "
+    for i, doc in enumerate(results_combined):
+        # print(f"Top {i + 1}: {doc.page_content}")
+        # print("Metadata:", doc.metadata)
+        res += doc.page_content +  "的Import为"+ doc.metadata['Import']+"。Usage为"+doc.metadata['Usage']+"Description为"+doc.metadata['Description']+".\n"
+        # doc.metadata['Path'] = "https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/"+doc.metadata['Path']
+    return res

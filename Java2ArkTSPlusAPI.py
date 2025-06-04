@@ -5,6 +5,7 @@
 import csv
 import json
 import os
+import re
 from pprint import pprint
 
 from langchain_community.document_loaders import JSONLoader
@@ -13,6 +14,7 @@ from dotenv import find_dotenv, load_dotenv
 from sqlalchemy.sql.sqltypes import NULLTYPE
 
 import searchSimilarCode
+from harmonyReferenceSearch import searchSimilarReference
 
 load_dotenv(find_dotenv())
 DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"]
@@ -35,6 +37,7 @@ def search_in_csv(file_path, column_name, search_value):
                 results.append(row)
     return results
 
+
 def search_in_csv2(file_path, column_name, search_value):
     results = []
     with open(file_path, mode='r', encoding='utf-8') as csv_file:
@@ -44,6 +47,7 @@ def search_in_csv2(file_path, column_name, search_value):
             if search_value in row[column_name]:
                 results.append(row)
     return results
+
 
 def get_API(javaCode):
     system_prompt = """
@@ -95,7 +99,8 @@ def get_API(javaCode):
             harmony_apis = []
             for match in sorted_matches:
                 # print(match)
-                res += "鸿蒙API: " + match["import_from"] + " 涉及到的方法描述为: " + match["target_text"] + "\n"
+                res += "相似的鸿蒙方法为: " + match["target_id"] + "鸿蒙API的import为: " + match[
+                    "import_from"] + " 涉及到的方法描述为: " + match["target_text"] + "\n"
                 harmony_apis.append(match["import_from"])
             # 更新全局映射字典
             java_to_harmony_api_map[key] = harmony_apis
@@ -106,17 +111,29 @@ def get_API(javaCode):
                 print(f"待检索内容{toSearch}")
                 matches = search_in_csv(file_path, column_name, toSearch)
                 sorted_matches = sorted(matches, key=lambda x: x["similarity"], reverse=True)[:5]
-                res = res + "Java代码中import " + key + " 涉及到的方法 "+ method +" 在翻译中可能用到的鸿蒙API有:\n"
+                res = res + "Java代码中import " + key + " 涉及到的方法 " + method + " 在翻译中可能用到的鸿蒙API有:\n"
                 harmony_apis = []
                 for match in sorted_matches:
                     # print(match)
-                    res += "鸿蒙API: " + match["import_from"] + " 涉及到的方法描述为: " + match["target_text"] + "\n"
+                    target_id = match["target_id"]
+                    # 去除"harmony::"
+                    without_prefix = target_id.replace("harmony::", "")
+
+                    # 按点分割
+                    parts = without_prefix.split(".")
+                    class_name = parts[0]
+                    method_name = parts[1]
+                    documentSearch = "Module name :" + class_name + ". The full name : " + method_name
+                    referenceKnowledge = searchSimilarReference(documentSearch)
+
+                    res = res + "相似的鸿蒙方法为: " + match["target_id"] + "该鸿蒙API的import为: " + match[
+                        "import_from"] + "该方法描述为: " + match[
+                              "target_text"] + "。可能与该API有关的知识为: " + referenceKnowledge + "。\n"
                     harmony_apis.append(match["import_from"])
                 # 更新全局映射字典
                 java_to_harmony_api_map[f"{key}.{method}"] = harmony_apis
 
     return res
-
 
 
 system_prompt_translation = """
@@ -139,7 +156,7 @@ EXAMPLE JSON OUTPUT:
 """
 
 folder_path = "./Harmony2JavaFunctionPairs4"
-json_output_dir = "./FinetuningDataset/Pair4/"
+json_output_dir = "./FinetuningDataset/Pair5/"
 
 filenames = []
 for root, dirs, files in os.walk(json_output_dir):
@@ -183,8 +200,8 @@ for filename in os.listdir(folder_path):
 
         user_prompt = ("鸿蒙代码为" + ArkTSCode + "\n" +
                        "Java代码为" + JavaCode + "\n" +
-                       "参考翻译为: " + similarCode+
-                       "API映射参考为: "+APIReference)
+                       "参考翻译为: " + similarCode +
+                       "API映射参考为: " + APIReference)
         messages = [{"role": "system", "content": system_prompt_translation},
                     {"role": "user", "content": user_prompt}]
         try:
@@ -200,7 +217,7 @@ for filename in os.listdir(folder_path):
                 print("Detected Kotlin function, skipping this document.")
                 flag = False
                 break
-            if "wrong format"  not in response.choices[0].message.content:
+            if "wrong format" not in response.choices[0].message.content:
                 # 将结果存储到res中
                 result = json.loads(response.choices[0].message.content)
                 # 添加 api_map 字段
@@ -211,6 +228,6 @@ for filename in os.listdir(folder_path):
             print(f"Error occurred while translating: {e}")
         finally:
             java_to_harmony_api_map.clear()
-    with open(json_output_dir+filename, "w", encoding="utf-8") as json_file:
+    with open(json_output_dir + filename, "w", encoding="utf-8") as json_file:
         json.dump(res, json_file, ensure_ascii=False, indent=4)
-    print("Finished file: "+filename)
+    print("Finished file: " + filename)
