@@ -3,7 +3,7 @@
 ## 前期准备
 
 - 运行[ReferenceJSON2DB.py](ReferenceJSON2DB.py)，将[知识库](https://box.nju.edu.cn/f/bb1b5980a9d54bc888b3/?dl=1)（请先下载）转为向量数据库。
-- 运行[functonPairs2DB.py](functonPairs2DB.py)和[functionPairs2DB2.py](functionPairs2DB2.py)，将相似代码转为向量数据库，**其中的file_path需要自行修改**。
+- 运行[functonPairs2DB.py](functonPairs2DB.py)和[functionPairs2DB2.py](functionPairs2DB2.py)，将相似代码转为向量数据库，**其中的file_path中的merged_function_pairs.json路径需要自行修改**。
 - API映射表 - [results.csv](https://box.nju.edu.cn/f/6401e6e5e2a04172a4a6/)（请先下载）
 
 ## ArkTS -> Java
